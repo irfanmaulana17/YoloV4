@@ -24,13 +24,12 @@ from deep_sort.detection import Detection
 from deep_sort.tracker import Tracker
 from tools import generate_detections as gdet
 flags.DEFINE_string('framework', 'tf', '(tf, tflite, trt')
-flags.DEFINE_string('weights', './checkpoints/yolov4-416',
-                    'path to weights file')
+flags.DEFINE_string('weights', './checkpoints/yolov4-tiny-416','path to weights file')
 flags.DEFINE_integer('size', 416, 'resize images to')
-flags.DEFINE_boolean('tiny', False, 'yolo or yolo-tiny')
+flags.DEFINE_boolean('tiny', True, 'yolo or yolo-tiny') #False
 flags.DEFINE_string('model', 'yolov4', 'yolov3 or yolov4')
-flags.DEFINE_string('video', './data/video/test.mp4', 'path to input video or set to 0 for webcam')
-flags.DEFINE_string('output', None, 'path to output video')
+flags.DEFINE_string('video', 'rtsp://admin:admin@192.168.35.9:8554/Streaming/Channels/101', 'path to input video or set to 0 for webcam')
+flags.DEFINE_string('output', './outputs/cek.avi', 'path to output video') #False
 flags.DEFINE_string('output_format', 'XVID', 'codec used in VideoWriter when saving video to file')
 flags.DEFINE_float('iou', 0.45, 'iou threshold')
 flags.DEFINE_float('score', 0.50, 'score threshold')
@@ -221,11 +220,13 @@ def main(_argv):
         # calculate frames per second of running detections
         fps = 1.0 / (time.time() - start_time)
         print("FPS: %.2f" % fps)
+        
         result = np.asarray(frame)
         result = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
         
         if not FLAGS.dont_show:
-            cv2.imshow("Output Video", result)
+            frame1 = cv2.resize(result,(1280,720),fx=0,fy=0, interpolation = cv2.INTER_CUBIC)
+            cv2.imshow("Output Video", frame1)
         
         # if output flag is set, save video file
         if FLAGS.output:
